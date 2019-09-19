@@ -59,18 +59,10 @@ namespace Revise.Files.STL {
 
         #endregion
 
-        private static readonly int languageCount;
+        private int languageCount;
 
         private List<StringTableKey> keys;
         private List<StringTableRow> rows;
-
-        /// <summary>
-        /// Initializes the <see cref="StringTableFile"/> class.
-        /// </summary>
-        static StringTableFile() {
-            Array languages = Enum.GetValues(typeof(StringTableLanguage));
-            languageCount = languages.Length;
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringTableFile"/> class.
@@ -112,6 +104,9 @@ namespace Revise.Files.STL {
             }
         }
 
+        public List<StringTableKey> Keys => keys;
+        public List<StringTableRow> Rows => rows;
+
         /// <summary>
         /// Loads the file from the specified stream.
         /// </summary>
@@ -132,7 +127,7 @@ namespace Revise.Files.STL {
                 keys.Add(key);
             }
 
-            int languageCount = reader.ReadInt32();
+            languageCount = reader.ReadInt32();
 
             for (int j = 0; j < rowCount; j++) {
                 StringTableRow row = new StringTableRow(languageCount);
@@ -289,6 +284,11 @@ namespace Revise.Files.STL {
 
             keys.RemoveAt(row);
             rows.RemoveAt(row);
+        }
+
+        public StringTableKey GetKeyForRow(int pRow)
+        {
+            return keys[pRow];
         }
 
         /// <summary>

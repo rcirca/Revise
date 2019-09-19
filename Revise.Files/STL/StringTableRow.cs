@@ -20,6 +20,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Revise.Files.STL {
     /// <summary>
@@ -59,8 +61,12 @@ namespace Revise.Files.STL {
             if (!Enum.IsDefined(typeof(StringTableLanguage), language)) {
                 throw new ArgumentException("language", "Language does not exist");
             }
-
             return text[(int)language];
+        }
+
+        public List<string> GetAllTextLanguage()
+        {
+            return text.ToList();
         }
 
         /// <summary>

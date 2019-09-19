@@ -28,6 +28,7 @@ namespace Revise.Files.STL {
         English = 1,
         Japanese = 2,
         ChineseTraditional = 3,
-        ChineseSimplified = 4
+        ChineseSimplified = 4,
+        AnotherOne = 5
     }
 }

@@ -1,11 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revise", "Revise\Revise.csproj", "{24AC4DAD-4179-4DB6-9457-4250429ED2C1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{35368721-7710-4DB3-93CF-FC604EF14609} = {35368721-7710-4DB3-93CF-FC604EF14609}
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revise.Files", "Revise.Files\Revise.Files.csproj", "{5EBE8893-60C4-444F-A2D5-39C81035B013}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CF62FABF-BBC9-4984-AD1E-841ADFA111AF}"
@@ -19,16 +16,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revise.Extensions", "Revise
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revise.Common", "Revise.Common\Revise.Common.csproj", "{35368721-7710-4DB3-93CF-FC604EF14609}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "STLEditor", "STLEditor", "{C374ED4C-9586-41C0-94F8-CB258EA6F4FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STLEditor", "STLEditor\STLEditor.csproj", "{A910D32B-C553-4EE0-8E71-510FE3DBF6DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24AC4DAD-4179-4DB6-9457-4250429ED2C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24AC4DAD-4179-4DB6-9457-4250429ED2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24AC4DAD-4179-4DB6-9457-4250429ED2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24AC4DAD-4179-4DB6-9457-4250429ED2C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5EBE8893-60C4-444F-A2D5-39C81035B013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5EBE8893-60C4-444F-A2D5-39C81035B013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EBE8893-60C4-444F-A2D5-39C81035B013}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,11 +42,19 @@ Global
 		{35368721-7710-4DB3-93CF-FC604EF14609}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35368721-7710-4DB3-93CF-FC604EF14609}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35368721-7710-4DB3-93CF-FC604EF14609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A910D32B-C553-4EE0-8E71-510FE3DBF6DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A910D32B-C553-4EE0-8E71-510FE3DBF6DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A910D32B-C553-4EE0-8E71-510FE3DBF6DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A910D32B-C553-4EE0-8E71-510FE3DBF6DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AFBDBCF-CA04-434C-B492-15B16DA05306} = {CF62FABF-BBC9-4984-AD1E-841ADFA111AF}
+		{A910D32B-C553-4EE0-8E71-510FE3DBF6DA} = {C374ED4C-9586-41C0-94F8-CB258EA6F4FE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3AED80A4-F8F2-45B0-8E96-66167BB07550}
 	EndGlobalSection
 EndGlobal
