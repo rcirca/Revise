@@ -21,6 +21,7 @@ namespace STLEditor
             InitializeComponent();
             _presenter = new STLEditorPresenter(new StringTableFile());
             _openFileDialog.Multiselect = true;
+            _saveButton.Enabled = false;
         }
 
         public void OnLoadFile(object sender, EventArgs pEvent)
@@ -30,6 +31,14 @@ namespace STLEditor
             if (result != DialogResult.OK)
                 return;
             SetupTabWithGrid(_openFileDialog.FileNames);
+            _saveButton.Enabled = _tabControl.TabCount > 0;
+        }
+
+        public void OnSaveFile(object sender, EventArgs pEvent)
+        {
+            var stl = _tabControl.SelectedTab.Tag as StringTableFile;
+
+            stl.Save();
         }
 
         public void SetupTabWithGrid(string[] pFiles)
@@ -47,6 +56,7 @@ namespace STLEditor
                 SetupGrid(dataGrid);
                 tab.Controls.Add(dataGrid);
                 tab.Controls[0].Dock = DockStyle.Fill;
+                tab.Tag = _presenter.STL;
                 _tabControl.TabPages.Add(tab);
                 _tabControl.SelectTab(tab);
             }

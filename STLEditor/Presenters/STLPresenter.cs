@@ -14,25 +14,16 @@ namespace STLEditor
     public class STLEditorPresenter
     {
         private StringTableFile _stl;
-        private const string HARD_CODED_STL_FILE = "Files/STR_ITEMTYPE.STL";
-        private const string LANG_6 = "Files/List_EventString_6_Languages.STL";
         public STLEditorPresenter(StringTableFile pStringTableFile)
         {
             _stl = pStringTableFile;
         }
 
         public int RowCount => _stl.RowCount;
+        public StringTableFile STL => _stl;
 
         public List<StringTableRow> Rows => _stl.Rows;
         public List<StringTableKey> Keys => _stl.Keys;
-
-        public void LoadFile()
-        {
-            var stream = File.OpenRead(LANG_6);
-
-            _stl = new StringTableFile();
-            _stl.Load(stream);
-        }
 
         public bool Load(string pSTLFilePath)
         {
@@ -62,28 +53,13 @@ namespace STLEditor
             {
                 var key = _stl.Keys[i];
                 var row = _stl.Rows[i];
-                if (!string.IsNullOrWhiteSpace(row.GetStartMessage()))
-                {
 
-                }
-
-                if (!string.IsNullOrWhiteSpace(row.GetEndMessage()))
-                {
-
-                }
-
-                if (!string.IsNullOrWhiteSpace(row.GetDescription()))
-                {
-
-                }
                 var dataGridRow = new DataGridViewRow();
                 dataGridRow.CreateCells(pDataGridView);
                 dataGridRow.Cells[0].Value = key.ID;
                 dataGridRow.Cells[1].Value = key.Key;
                 for (var j = 0; j < _stl.LanguageCount; j++)
-                {
                     dataGridRow.Cells[j + 2].Value = row.GetText((StringTableLanguage) j);
-                }
 
                 list.Add(dataGridRow);
             }

@@ -31,14 +31,15 @@
             this._loadButton = new System.Windows.Forms.Button();
             this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this._tabControl = new System.Windows.Forms.TabControl();
+            this._saveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _loadButton
             // 
             this._loadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._loadButton.Location = new System.Drawing.Point(837, 12);
+            this._loadButton.Location = new System.Drawing.Point(872, 12);
             this._loadButton.Name = "_loadButton";
-            this._loadButton.Size = new System.Drawing.Size(115, 31);
+            this._loadButton.Size = new System.Drawing.Size(80, 30);
             this._loadButton.TabIndex = 1;
             this._loadButton.Text = "Load";
             this._loadButton.UseVisualStyleBackColor = true;
@@ -63,11 +64,21 @@
             this._tabControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
             this._tabControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
             // 
+            // _saveButton
+            // 
+            this._saveButton.Location = new System.Drawing.Point(786, 12);
+            this._saveButton.Name = "_saveButton";
+            this._saveButton.Size = new System.Drawing.Size(80, 30);
+            this._saveButton.TabIndex = 3;
+            this._saveButton.Text = "Save";
+            this._saveButton.UseVisualStyleBackColor = true;
+            // 
             // STLEditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(964, 626);
+            this.Controls.Add(this._saveButton);
             this.Controls.Add(this._tabControl);
             this.Controls.Add(this._loadButton);
             this.Name = "STLEditorView";
@@ -80,6 +91,7 @@
         private System.Windows.Forms.Button _loadButton;
         private System.Windows.Forms.OpenFileDialog _openFileDialog;
         private System.Windows.Forms.TabControl _tabControl;
+        private System.Windows.Forms.Button _saveButton;
     }
 }
 
