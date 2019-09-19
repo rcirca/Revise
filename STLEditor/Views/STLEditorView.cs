@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -14,97 +15,111 @@ namespace STLEditor
 {
     public partial class STLEditorView : Form
     {
-        private const string HARD_CODED_STL_FILE = "Files/STR_ITEMTYPE.STL";
-        private const string LANG_6 = "Files/List_EventString_6_Languages";
         private STLEditorPresenter _presenter;
         public STLEditorView()
         {
             InitializeComponent();
-            if (!SystemInformation.TerminalServerSession)
-            {
-                Type dgvType = _stlDataGrid.GetType();
-                PropertyInfo pi = dgvType.GetProperty("DoubleBuffered",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
-                pi.SetValue(_stlDataGrid, true, null);
-            }
             _presenter = new STLEditorPresenter(new StringTableFile());
+            _openFileDialog.Multiselect = true;
 
         }
 
         public void OnLoadFile(object sender, EventArgs pEvent)
         {
+
             var result =_openFileDialog.ShowDialog(this);
             if (result != DialogResult.OK)
                 return;
-            try
+            SetupTabWithGrid(_openFileDialog.FileNames);
+
+            //try
+            //{
+            //    _presenter.Load(_openFileDialog.FileName);
+            //    SetupGrid();
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show($"File format mismatch: {_openFileDialog.FileName}. \n Make sure it's a STL file", "Error",
+            //        MessageBoxButtons.OK);
+            //    Console.WriteLine(e.StackTrace);
+            //}
+        }
+
+        public void SetupTabWithGrid(string[] pFiles)
+        {
+            foreach (var file in pFiles)
             {
-                _presenter.Load(_openFileDialog.FileName);
-                UpdateGrid();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show($"File format mismatch: {_openFileDialog.FileName}. \n Make sure it's a STL file", "Error",
-                    MessageBoxButtons.OK);
-                Console.WriteLine(e.StackTrace);
+                SetupTabWithGrid(file);
             }
         }
 
-        public void UpdateGrid()
+        public void SetupTabWithGrid(string pFileName)
         {
-            _stlDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-            _stlDataGrid.Columns.Add("ID", "ID");
-            _stlDataGrid.Columns.Add("Key", "String ID");
-            var maxLangCount = 0;
-            var rowData = new List<string>();
-            for (var i = 0; i < _presenter.RowCount; i++)
+            if (_presenter.Load(pFileName))
             {
-                var row = _presenter.Rows;
-                var key = _presenter.Keys;
-                rowData.Add($"{key[i].ID}");
-                rowData.Add(key[i].Key);
-                PopulateLanguages(rowData, row[i], ref maxLangCount);
+                var tab = new TabPage(Path.GetFileName(pFileName));
+                var dataGrid = new DataGridView();
+                SetupGrid(dataGrid);
+                tab.Controls.Add(dataGrid);
+                tab.Controls[0].Dock = DockStyle.Fill;
+                _tabControl.TabPages.Add(tab);
+                _tabControl.SelectTab(tab);
+            }
+        }
 
-                _stlDataGrid.Rows.Add(rowData.ToArray());
-                rowData.Clear();
+        public void SetupGrid(DataGridView pDataGridView)
+        {
+            if (!SystemInformation.TerminalServerSession)
+            {
+                var type = pDataGridView.GetType();
+                var propertyInfo = type.GetProperty("DoubleBuffered",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                propertyInfo?.SetValue(pDataGridView, true, null);
             }
 
-            _stlDataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            _stlDataGrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.ColumnHeader);
-            foreach (DataGridViewColumn column in _stlDataGrid.Columns)
+            pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+
+            var listTuple = _presenter.GetDataGridViewColumns();
+
+            foreach (var col in listTuple)
+                pDataGridView.Columns.Add(col.colName, col.colDisplay);
+
+            var arr = _presenter.GetDataGridViewRows(pDataGridView).ToArray();
+            pDataGridView.Rows.AddRange(arr);
+
+            pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            pDataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.ColumnHeader);
+            foreach (DataGridViewColumn column in pDataGridView.Columns)
             {
-                if (string.Equals(column.Name, "ID"))
+                if (string.Equals(column.Name, "id"))
                     column.MinimumWidth = 45;
-                else if (string.Equals(column.Name, "Key"))
+                else if (string.Equals(column.Name, "string_id"))
                     column.MinimumWidth = 100;
                 else
                     column.MinimumWidth = 125;
             }
         }
 
-        private void PopulateLanguages(List<string> pRowData, StringTableRow pRow, ref int pMaxLangCount)
+        public void OnDragDrop(object pSender, DragEventArgs pEventArgs)
         {
-            var list = pRow.GetAllTextLanguage();
-            var langCount = 0;
-            foreach (var lang in list)
+            if (!pEventArgs.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
+
+            var files = (string[])pEventArgs.Data.GetData(DataFormats.FileDrop);
+
+            try
             {
-                if (pMaxLangCount < list.Count)
-                {
-                    _stlDataGrid.Columns.Add($"Lang{langCount}", $"Text ({((StringTableLanguage)langCount).ToString()})");
-                    pMaxLangCount++;
-                }
-                pRowData.Add(lang);
-                langCount++;
+                SetupTabWithGrid(files);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
-        private void PopulateDescription()
+        public void OnDragEnter(object pSender, DragEventArgs pEventArgs)
         {
-
-        }
-
-        private void BuildRows()
-        {
-
+            pEventArgs.Effect = pEventArgs.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
         }
     }
 }

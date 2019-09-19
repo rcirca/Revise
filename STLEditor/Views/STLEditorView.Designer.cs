@@ -28,26 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._stlDataGrid = new System.Windows.Forms.DataGridView();
             this._loadButton = new System.Windows.Forms.Button();
             this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            ((System.ComponentModel.ISupportInitialize)(this._stlDataGrid)).BeginInit();
+            this._tabControl = new System.Windows.Forms.TabControl();
             this.SuspendLayout();
-            // 
-            // _stlDataGrid
-            // 
-            this._stlDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._stlDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this._stlDataGrid.Location = new System.Drawing.Point(12, 50);
-            this._stlDataGrid.Name = "_stlDataGrid";
-            this._stlDataGrid.Size = new System.Drawing.Size(775, 388);
-            this._stlDataGrid.TabIndex = 0;
             // 
             // _loadButton
             // 
-            this._loadButton.Location = new System.Drawing.Point(13, 13);
+            this._loadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._loadButton.Location = new System.Drawing.Point(837, 12);
             this._loadButton.Name = "_loadButton";
             this._loadButton.Size = new System.Drawing.Size(115, 31);
             this._loadButton.TabIndex = 1;
@@ -60,25 +49,37 @@
             this._openFileDialog.FileName = "_openFileDialog";
             this._openFileDialog.Filter = "(*.STL)|*.STL|(*.stl)|*.stl|All files (*.*)|*.*";
             // 
+            // _tabControl
+            // 
+            this._tabControl.AllowDrop = true;
+            this._tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._tabControl.Location = new System.Drawing.Point(12, 48);
+            this._tabControl.Name = "_tabControl";
+            this._tabControl.SelectedIndex = 0;
+            this._tabControl.Size = new System.Drawing.Size(940, 566);
+            this._tabControl.TabIndex = 2;
+            this._tabControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+            this._tabControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDragEnter);
+            // 
             // STLEditorView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(964, 626);
+            this.Controls.Add(this._tabControl);
             this.Controls.Add(this._loadButton);
-            this.Controls.Add(this._stlDataGrid);
             this.Name = "STLEditorView";
-            this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this._stlDataGrid)).EndInit();
+            this.Text = "FQ STL Editor";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.DataGridView _stlDataGrid;
         private System.Windows.Forms.Button _loadButton;
         private System.Windows.Forms.OpenFileDialog _openFileDialog;
+        private System.Windows.Forms.TabControl _tabControl;
     }
 }
 
