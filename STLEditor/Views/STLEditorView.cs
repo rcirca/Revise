@@ -21,7 +21,6 @@ namespace STLEditor
             InitializeComponent();
             _presenter = new STLEditorPresenter(new StringTableFile());
             _openFileDialog.Multiselect = true;
-
         }
 
         public void OnLoadFile(object sender, EventArgs pEvent)
@@ -31,26 +30,12 @@ namespace STLEditor
             if (result != DialogResult.OK)
                 return;
             SetupTabWithGrid(_openFileDialog.FileNames);
-
-            //try
-            //{
-            //    _presenter.Load(_openFileDialog.FileName);
-            //    SetupGrid();
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show($"File format mismatch: {_openFileDialog.FileName}. \n Make sure it's a STL file", "Error",
-            //        MessageBoxButtons.OK);
-            //    Console.WriteLine(e.StackTrace);
-            //}
         }
 
         public void SetupTabWithGrid(string[] pFiles)
         {
             foreach (var file in pFiles)
-            {
                 SetupTabWithGrid(file);
-            }
         }
 
         public void SetupTabWithGrid(string pFileName)
