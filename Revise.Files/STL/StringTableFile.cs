@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Revise.Files.STL.Attributes;
 
 namespace Revise.Files.STL {
@@ -243,7 +244,13 @@ namespace Revise.Files.STL {
         /// <param name="key">The key.</param>
         /// <param name="id">The id.</param>
         /// <returns>The row created.</returns>
-        public StringTableRow AddRow(string key, int id) {
+        public StringTableRow AddRow(string key, int id)
+        {
+            var keyExist = keys.FirstOrDefault(p => p.ID == id || string.Equals(p.Key, key, StringComparison.CurrentCultureIgnoreCase));
+            if (keyExist != null)
+            {
+                throw new ArgumentException($"ID or Key already exists for: ID({keyExist.ID}) Key({keyExist.Key})");
+            }
             StringTableKey tableKey = new StringTableKey();
             tableKey.Key = key;
             tableKey.ID = id;
