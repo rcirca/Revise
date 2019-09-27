@@ -17,11 +17,17 @@ namespace STLEditor
         private readonly StringTableFile _stl;
         private string _fileName;
 
-        public STLEditorPresenter(StringTableFile pStringTableFile)
+        public STLEditorPresenter()
         {
-            _stl = pStringTableFile;
+            _stl = new StringTableFile();
         }
 
+        public string Filename => _fileName;
+
+        public int LanguageCount => _stl.LanguageCount;
+
+        public StringTableLanguage SelectedLanguage { get; private set; }
+        public bool ShowAllLanguages { get; private set; }
         public bool Load(string pSTLFilePath)
         {
             try
@@ -57,8 +63,10 @@ namespace STLEditor
             }
         }
 
+
         public List<DataGridViewRow> GetRowsWithAllLanguages(DataGridView pDataGridView)
         {
+            ShowAllLanguages = true;
             var list = new List<DataGridViewRow>();
             for (var i = 0; i < _stl.RowCount; i++)
             {
@@ -94,6 +102,8 @@ namespace STLEditor
 
         public List<DataGridViewRow> GetRowsForLanguage(DataGridView pDataGridView, StringTableLanguage pLanguage)
         {
+            SelectedLanguage = pLanguage;
+            ShowAllLanguages = false;
             var list = new List<DataGridViewRow>();
             for (var i = 0; i < _stl.RowCount; i++)
             {
