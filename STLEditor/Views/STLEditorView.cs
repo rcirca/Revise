@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Revise.Files.STL;
+using STLEditor.Util;
 
 namespace STLEditor
 {
@@ -74,21 +68,21 @@ namespace STLEditor
 
             pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-            var listTuple = _presenter.GetDataGridViewColumns();
+            var listTuple = _presenter.GetColumnsForAllLanguages();
 
             foreach (var col in listTuple)
                 pDataGridView.Columns.Add(col.colName, col.colDisplay);
 
-            var arr = _presenter.GetDataGridViewRows(pDataGridView).ToArray();
+            var arr = _presenter.GetRowsWithAllLanguages(pDataGridView).ToArray();
             pDataGridView.Rows.AddRange(arr);
 
             pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             pDataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.ColumnHeader);
             foreach (DataGridViewColumn column in pDataGridView.Columns)
             {
-                if (string.Equals(column.Name, "id"))
+                if (string.Equals(column.Name, StringIdentifiers.ID))
                     column.MinimumWidth = 45;
-                else if (string.Equals(column.Name, "string_id"))
+                else if (string.Equals(column.Name, StringIdentifiers.KEY))
                     column.MinimumWidth = 100;
                 else
                     column.MinimumWidth = 125;
