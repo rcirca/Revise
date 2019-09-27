@@ -16,14 +16,11 @@ namespace STLEditor
     {
         private readonly StringTableFile _stl;
         private string _fileName;
+
         public STLEditorPresenter(StringTableFile pStringTableFile)
         {
             _stl = pStringTableFile;
         }
-        public StringTableFile STL => _stl;
-
-        public List<StringTableRow> Rows => _stl.Rows;
-        public List<StringTableKey> Keys => _stl.Keys;
 
         public bool Load(string pSTLFilePath)
         {
@@ -41,7 +38,21 @@ namespace STLEditor
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show(e.Message, $"Error Loading: {_fileName}", MessageBoxButtons.OK);
+                return false;
+            }
+        }
+
+        public bool Save()
+        {
+            try
+            {
+                _stl.Save();
+                return true;
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, $"Error saving file: {_fileName}", MessageBoxButtons.OK);
                 return false;
             }
         }
@@ -69,14 +80,8 @@ namespace STLEditor
 
                     dataGridRow.Cells[index++].Value = row.GetDescription(stringLang);
 
-                
                     if (_stl.TableType != StringTableType.Quest)
-                    {
-                        if (row.GetStartMessage().Length > 0 || row.GetEndMessage().Length > 0)
-                            MessageBox.Show($"Start: {row.GetStartMessage()} End: {row.GetEndMessage()}", _fileName,
-                                MessageBoxButtons.OK);
                         continue;
-                    }
 
                     dataGridRow.Cells[index++].Value = row.GetStartMessage(stringLang);
                     dataGridRow.Cells[index++].Value = row.GetEndMessage(stringLang);
@@ -84,6 +89,47 @@ namespace STLEditor
 
                 list.Add(dataGridRow);
             }
+            return list;
+        }
+
+        public List<DataGridViewRow> GetRowsForLanguage(DataGridView pDataGridView, StringTableLanguage pLanguage)
+        {
+            var list = new List<DataGridViewRow>();
+            for (var i = 0; i < _stl.RowCount; i++)
+            {
+                var key = _stl.Keys[i];
+                var row = _stl.Rows[i];
+
+                var dataGridRow = new DataGridViewRow();
+                dataGridRow.CreateCells(pDataGridView);
+                dataGridRow.Cells[0].Value = key.ID;
+                dataGridRow.Cells[1].Value = key.Key;
+
+                var index = 2;
+                dataGridRow.Cells[index++].Value = row.GetText(pLanguage);
+
+                if (_stl.TableType == StringTableType.Normal)
+                {
+                    list.Add(dataGridRow);
+                    continue;
+                }
+
+                dataGridRow.Cells[index++].Value = row.GetDescription(pLanguage);
+
+                if (_stl.TableType != StringTableType.Quest)
+                {
+                    list.Add(dataGridRow);
+                    continue;
+                }
+
+                dataGridRow.Cells[index++].Value = row.GetStartMessage(pLanguage);
+                dataGridRow.Cells[index].Value = row.GetEndMessage(pLanguage);
+                list.Add(dataGridRow);
+            }
+
+            if (list.Count != _stl.RowCount)
+                throw new Exception("GridRows does not match RowCount of STL File");
+
             return list;
         }
 

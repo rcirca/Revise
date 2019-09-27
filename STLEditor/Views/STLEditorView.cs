@@ -30,9 +30,9 @@ namespace STLEditor
 
         public void OnSaveFile(object sender, EventArgs pEvent)
         {
-            var stl = _tabControl.SelectedTab.Tag as StringTableFile;
+            var presenter = _tabControl.SelectedTab.Tag as STLEditorPresenter;
 
-            stl.Save();
+            presenter?.Save();
         }
 
         public void SetupTabWithGrid(string[] pFiles)
@@ -50,7 +50,8 @@ namespace STLEditor
                 SetupGrid(dataGrid);
                 tab.Controls.Add(dataGrid);
                 tab.Controls[0].Dock = DockStyle.Fill;
-                tab.Tag = _presenter.STL;
+                tab.Tag = _presenter;
+                
                 _tabControl.TabPages.Add(tab);
                 _tabControl.SelectTab(tab);
             }
@@ -68,24 +69,34 @@ namespace STLEditor
 
             pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-            var listTuple = _presenter.GetColumnsForAllLanguages();
+            var listTuple = _presenter.GetColumnsForLanguage(StringTableLanguage.English);
 
             foreach (var col in listTuple)
                 pDataGridView.Columns.Add(col.colName, col.colDisplay);
 
-            var arr = _presenter.GetRowsWithAllLanguages(pDataGridView).ToArray();
+            var arr = _presenter.GetRowsForLanguage(pDataGridView, StringTableLanguage.English).ToArray();
             pDataGridView.Rows.AddRange(arr);
 
-            pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            pDataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.ColumnHeader);
+            pDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            pDataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             foreach (DataGridViewColumn column in pDataGridView.Columns)
             {
                 if (string.Equals(column.Name, StringIdentifiers.ID))
+                {
                     column.MinimumWidth = 45;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
                 else if (string.Equals(column.Name, StringIdentifiers.KEY))
+                {
                     column.MinimumWidth = 100;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
                 else
+                {
                     column.MinimumWidth = 125;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                }
             }
         }
 

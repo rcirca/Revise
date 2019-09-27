@@ -66,12 +66,14 @@
             // 
             // _saveButton
             // 
+            this._saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._saveButton.Location = new System.Drawing.Point(786, 12);
             this._saveButton.Name = "_saveButton";
             this._saveButton.Size = new System.Drawing.Size(80, 30);
             this._saveButton.TabIndex = 3;
             this._saveButton.Text = "Save";
             this._saveButton.UseVisualStyleBackColor = true;
+            this._saveButton.Click += new System.EventHandler(this.OnSaveFile);
             // 
             // STLEditorView
             // 
