@@ -136,10 +136,6 @@ namespace STLEditor
                     if (rekt.Contains(e.Location))
                     {
                         _tabControl.SelectedIndex = i;
-                        //using (var contextMenu = BuildContextMenuForTab(_tabControl.SelectedTab))
-                        //{
-                        //    contextMenu.Show(_tabControl, e.Location);
-                        //}
 
                         var contextMenu = BuildContextMenuForTab(_tabControl.SelectedTab);
                         contextMenu.Show(_tabControl, e.Location);
