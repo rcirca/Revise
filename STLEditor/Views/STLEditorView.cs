@@ -22,7 +22,7 @@ namespace STLEditor
             _tabControl.MouseClick += OnTabControlMouseClick;
         }
 
-        public void OnLoadFile(object sender, EventArgs pEvent)
+        private void OnLoadFile(object sender, EventArgs pEvent)
         {
 
             var result =_openFileDialog.ShowDialog(this);
@@ -32,78 +32,73 @@ namespace STLEditor
             _saveButton.Enabled = _tabControl.TabCount > 0;
         }
 
-        public void OnSaveFile(object sender, EventArgs pEvent)
+        private void OnSaveFile(object sender, EventArgs pEvent)
         {
-            var presenter = _tabControl.SelectedTab.Tag as STLEditorPresenter;
-
-            presenter?.Save();
+            ((STLTabPageView)_tabControl.SelectedTab)?.Presenter?.Save();
         }
 
-        public void SetupTabWithGrid(string[] pFiles)
+        private void SetupTabWithGrid(string[] pFiles)
         {
             foreach (var file in pFiles)
                SetupTabWithGrid(file);
         }
 
-        public void SetupTabWithGrid(string pFileName)
+        private void SetupTabWithGrid(string pFileName)
         {
             var presenter = new STLEditorPresenter();
             if (presenter.Load(pFileName))
             {
                 var tab = new STLTabPageView(presenter);
-                var dataGrid = new DataGridView();
-                SetupGrid(tab, dataGrid);
-                tab.Controls.Add(dataGrid);
-                tab.Controls[0].Dock = DockStyle.Fill;
-                tab.Tag = presenter;
+                SetupGrid(tab);
                 _tabControl.TabPages.Add(tab);
                 _tabControl.SelectedTab = tab;
             }
         }
 
-        public void SetupGrid(STLTabPageView pTabPage, DataGridView pDataGridView)
+        private void SetupGrid(STLTabPageView pTabPage, StringTableLanguage pLanguage = StringTableLanguage.English)
         {
-            if (!SystemInformation.TerminalServerSession)
-            {
-                var type = pDataGridView.GetType();
-                var propertyInfo = type.GetProperty("DoubleBuffered",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
-                propertyInfo?.SetValue(pDataGridView, true, null);
-            }
+            var dataGrid = CreateDataGridWithDoubleBuffer();
 
-            pDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-            var listTuple = pTabPage.Presenter.GetColumnsForLanguage(StringTableLanguage.English);
+            var listTuple = pTabPage.Presenter.GetColumnsForLanguage(pLanguage);
 
             foreach (var col in listTuple)
-                pDataGridView.Columns.Add(col.colName, col.colDisplay);
+                dataGrid.Columns.Add(col.colName, col.colDisplay);
 
-            var arr = pTabPage.Presenter.GetRowsForLanguage(pDataGridView, StringTableLanguage.English).ToArray();
-            pDataGridView.Rows.AddRange(arr);
+            var arr = pTabPage.Presenter.GetRowsForLanguage(dataGrid, pLanguage).ToArray();
+            dataGrid.Rows.AddRange(arr);
 
-            pDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            foreach (DataGridViewColumn column in pDataGridView.Columns)
-            {
-                if (string.Equals(column.Name, StringIdentifiers.ID))
-                {
-                    column.MinimumWidth = 45;
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                }
-                else if (string.Equals(column.Name, StringIdentifiers.KEY))
-                {
-                    column.MinimumWidth = 100;
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                }
-                else
-                {
-                    column.MinimumWidth = 125;
-                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-                }
-            }
+            SetupColumns(dataGrid);
+
+            pTabPage.DataGrid = dataGrid;
         }
 
-        public void OnDragDrop(object pSender, DragEventArgs pEventArgs)
+        private void SetupGridForAllLanguages(STLTabPageView pTabPage)
+        {
+            var dataGrid = CreateDataGridWithDoubleBuffer();
+
+            dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+
+            var listTuple = pTabPage.Presenter.GetColumnsForAllLanguages();
+
+            foreach (var col in listTuple)
+                dataGrid.Columns.Add(col.colName, col.colDisplay);
+
+            var arr = pTabPage.Presenter.GetRowsWithAllLanguages(dataGrid).ToArray();
+            dataGrid.Rows.AddRange(arr);
+
+            SetupColumns(dataGrid);
+
+            pTabPage.DataGrid = dataGrid;
+        }
+
+        private void ResetGrid(STLTabPageView pTabPage)
+        {
+            pTabPage.Controls.Clear();
+        }
+
+        private void OnDragDrop(object pSender, DragEventArgs pEventArgs)
         {
             if (!pEventArgs.Data.GetDataPresent(DataFormats.FileDrop))
                 return;
@@ -120,7 +115,7 @@ namespace STLEditor
             }
         }
 
-        public void OnDragEnter(object pSender, DragEventArgs pEventArgs)
+        private void OnDragEnter(object pSender, DragEventArgs pEventArgs)
         {
             pEventArgs.Effect = pEventArgs.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
         }
@@ -146,34 +141,27 @@ namespace STLEditor
             }
         }
 
-        private void UpdateLanguage(object pSender, EventArgs pArgs)
+        private void ChangeLanguage(STLTabPageView pTab, StringTableLanguage pLanguage)
         {
-            if (_tabControl.SelectedTab is STLTabPageView tab && pSender is MenuItem menuItem)
-            {
-                var presenter = tab.Presenter;
 
-                if (!presenter.ShowAllLanguages)
-                {
-                    if(string.Equals(menuItem.Text, presenter.SelectedLanguage.ToString()))
-                        return;
-                    if (string.Equals(menuItem.Text, "All Languages"))
-                    {
-                        //update to show all
-                    }
+            var presenter = pTab.Presenter;
 
-                    //update to new language
-                }
+            if (pLanguage == presenter.SelectedLanguage)
+                return;
 
-                if (presenter.ShowAllLanguages)
-                {
-                    if (string.Equals(menuItem.Text, "All Languages"))
-                        return;
-
-                    //update to specific language
-                }
-            }
+            ResetGrid(pTab);
+            SetupGrid(pTab, pLanguage);
         }
 
+        private void ShowAllLanguages(STLTabPageView pTab)
+        {
+            var presenter = pTab.Presenter;
+            if (presenter.ShowAllLanguages)
+                return;
+
+            ResetGrid(pTab);
+            SetupGridForAllLanguages(pTab);
+        }
         private void OnCloseTab(object pSender, EventArgs pArgs)
         {
             var selectedTab = _tabControl.SelectedTab;
@@ -190,14 +178,55 @@ namespace STLEditor
             contextMenu.MenuItems.Add("-");
             for(var i = 0; i < tab?.Presenter.LanguageCount; i++)
             {
-                contextMenu.MenuItems.Add(((StringTableLanguage) i).ToString(), UpdateLanguage);
+                var language = ((StringTableLanguage) i);
+                contextMenu.MenuItems.Add(language.ToString(), (sender, e) => ChangeLanguage(tab, language));
             }
 
-            contextMenu.MenuItems.Add("All Languages");
+            contextMenu.MenuItems.Add("All Languages", (sender, e) => ShowAllLanguages(tab));
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add("Close", OnCloseTab);
 
             return contextMenu;
+        }
+
+        private DataGridView CreateDataGridWithDoubleBuffer()
+        {
+            var dataGrid = new DataGridView();
+            if (!SystemInformation.TerminalServerSession)
+            {
+                var type = dataGrid.GetType();
+                var propertyInfo = type.GetProperty("DoubleBuffered",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                propertyInfo?.SetValue(dataGrid, true, null);
+            }
+
+            return dataGrid;
+        }
+
+        private void SetupColumns(DataGridView pDataGrid)
+        {
+
+            pDataGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+            foreach (DataGridViewColumn column in pDataGrid.Columns)
+            {
+                if (string.Equals(column.Name, StringIdentifiers.ID))
+                {
+                    column.MinimumWidth = 45;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+                else if (string.Equals(column.Name, StringIdentifiers.KEY))
+                {
+                    column.MinimumWidth = 100;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+                else
+                {
+                    column.MinimumWidth = 125;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                }
+            }
         }
     }
 }

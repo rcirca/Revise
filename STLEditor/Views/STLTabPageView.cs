@@ -11,22 +11,27 @@ namespace STLEditor.Views
     {
         private STLEditorPresenter _stlPresenter;
 
+        private DataGridView _dataGrid;
+
         public STLTabPageView(STLEditorPresenter pPresenter) : base(pPresenter.Filename)
         {
             _stlPresenter = pPresenter;
-            MouseClick += OnMouseClick;
-            this.ContextMenu = new ContextMenu();
-            ContextMenu.MenuItems.Add(new MenuItem("Hello"));
-        }
-
-        private void OnMouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                MessageBox.Show("RightClicked");
-            }
         }
 
         public STLEditorPresenter Presenter => _stlPresenter;
+
+        public DataGridView DataGrid
+        {
+            get => _dataGrid;
+
+            set
+            {
+                if(Controls.Count > 0)
+                    Controls.Clear();
+
+                Controls.Add(value);
+                Controls[0].Dock = DockStyle.Fill;
+            }
+        }
     }
 }
